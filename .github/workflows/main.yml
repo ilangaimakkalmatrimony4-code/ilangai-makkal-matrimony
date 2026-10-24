@@ -1,0 +1,35 @@
+name: Build Ilangai Makkal Matrimony APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download project
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Extract Android project
+        run: |
+          unzip -o Ilangai_Makkal_Matrimony_Android_Project.zip -d project
+          find project -name settings.gradle -o -name settings.gradle.kts
+
+      - name: Build APK
+        run: |
+          cd project/ilangai-app
+          chmod +x gradlew || true
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Ilangai-Makkal-Matrimony-APK
+          path: project/ilangai-app/app/build/outputs/apk/debug/*.apk
